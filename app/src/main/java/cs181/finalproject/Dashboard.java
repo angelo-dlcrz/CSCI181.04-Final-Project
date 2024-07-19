@@ -76,8 +76,8 @@ public class Dashboard extends AppCompatActivity {
                 .equalTo("uuid", uuid)
                 .findFirst();
         File getImageDir = getExternalCacheDir();
-        File file = new File(getImageDir, u.getPath());
         if(u.getPath()!=null) {
+            File file = new File(getImageDir, u.getPath());
             if (file.exists()) {
                 Picasso.get()
                         .load(file)

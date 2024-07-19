@@ -24,12 +24,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 
 public class AddRecipe extends AppCompatActivity {
     private Button add, cancel;
     private EditText name, description, ingredients, steps;
-    private ImageView image;
-    private String imagePath;
+    private Button image;
+    private RealmList<String> imagePaths;
     SharedPreferences sharedPreferences;
 
     Realm realm;
@@ -61,13 +62,11 @@ public class AddRecipe extends AppCompatActivity {
             }
         });
 
-
-
         name = findViewById(R.id.recipename);
         description = findViewById(R.id.description);
         ingredients = findViewById(R.id.ingredients);
         steps = findViewById(R.id.instructions);
-        image = findViewById(R.id.recipeimage);
+        image = findViewById(R.id.recipeImage);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,95 +76,84 @@ public class AddRecipe extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
         sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
+        imagePaths = new RealmList<>();
     }
-    public void add(){
+
+    public void add() {
         Recipe recipe = new Recipe();
         String uuid = sharedPreferences.getString("uuid", null);
         User user = realm.where(User.class)
                 .equalTo("uuid", uuid)
                 .findFirst();
 
-        if(name.getText().toString().isEmpty()){
+        if (name.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter name", Toast.LENGTH_SHORT).show();
-        }
-        else if(description.getText().toString().isEmpty()){
+        } else if (description.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter description", Toast.LENGTH_SHORT).show();
-        }
-        else if(ingredients.getText().toString().isEmpty()){
+        } else if (ingredients.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter ingredients", Toast.LENGTH_SHORT).show();
-        }
-        else if(steps.getText().toString().isEmpty()){
+        } else if (steps.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter instructions", Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else {
             recipe.setName(name.getText().toString());
             recipe.setDescription(description.getText().toString());
             recipe.setIngredients(ingredients.getText().toString());
             recipe.setInstructions(steps.getText().toString());
-            recipe.setPath(imagePath);
+            recipe.setImagePaths(imagePaths);
             recipe.setAuthor(user.getName());
+
             try {
                 realm.beginTransaction();
                 realm.copyToRealm(recipe);
                 realm.commitTransaction();
-            }
-            catch (Exception e){
+                Toast.makeText(this, "Recipe saved", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
                 Toast.makeText(this, "Error saving", Toast.LENGTH_SHORT).show();
             }
             finish();
         }
     }
-    public void cancel(){
+
+    public void cancel() {
         finish();
     }
-    public void addImage(){
+
+    public void addImage() {
         Intent intent = new Intent(this, ImageActivity.class);
         startActivityForResult(intent, 0);
     }
-    public void onActivityResult(int requestCode, int responseCode, Intent data){
+
+    @Override
+    protected void onActivityResult(int requestCode, int responseCode, Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
 
-        if(requestCode==0){
-            if(responseCode == ImageActivity.RESULT_CODE_IMAGE_TAKEN){
+        if (requestCode == 0) {
+            if (responseCode == ImageActivity.RESULT_CODE_IMAGE_TAKEN) {
                 byte[] jpeg = data.getByteArrayExtra("rawJpeg");
 
-                try{
-                    imagePath = System.currentTimeMillis()+".jpeg";
+                try {
+                    String imagePath = System.currentTimeMillis() + ".jpeg";
                     File savedImage = saveFile(jpeg, imagePath);
 
-                    refreshImageView(image, savedImage);
-                }
-                catch(Exception e)
-                {
+                    imagePaths.add(imagePath);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
     }
-    private File saveFile(byte[] jpeg, String filename) throws IOException
-    {
-        // this is the root directory for the images
+
+    private File saveFile(byte[] jpeg, String filename) throws IOException {
         File getImageDir = getExternalCacheDir();
-
-        // just a sample, normally you have a diff image name each time
         File savedImage = new File(getImageDir, filename);
-
-
         FileOutputStream fos = new FileOutputStream(savedImage);
         fos.write(jpeg);
         fos.close();
         return savedImage;
     }
-    private void refreshImageView(ImageView imageView, File savedImage) {
 
 
-        // this will put the image saved to the file system to the imageview
-        Picasso.get()
-                .load(savedImage)
-                .networkPolicy(NetworkPolicy.NO_CACHE)
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .into(imageView);
-    }
+    @Override
     public void onDestroy() {
         super.onDestroy();
 

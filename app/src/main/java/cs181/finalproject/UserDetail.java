@@ -38,6 +38,27 @@ public class UserDetail extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     private RecyclerView recyclerView;
 
+    public void init() {
+        realm = Realm.getDefaultInstance();
+        recyclerView = findViewById(R.id.usergallery);
+        sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
+        String uuid = sharedPreferences.getString("uuid", null);
+        user = realm.where(User.class)
+                .equalTo("uuid", uuid)
+                .findFirst();
+        username = user.getName();
+
+        Log.d("UserDetail", "CURRENT LOGGED IN USER: " + username);
+
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        recyclerView.setLayoutManager(mLayoutManager);
+        if(realm.where(RecipeImage.class).equalTo("username", username).findAll() != null) {
+            RealmResults<RecipeImage> list = realm.where(RecipeImage.class).equalTo("username", username).findAll();
+            UserGalleryAdapter adapter = new UserGalleryAdapter(this, list, true);
+            recyclerView.setAdapter(adapter);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,35 +69,6 @@ public class UserDetail extends AppCompatActivity {
         init();
     }
 
-    public void init() {
-        realm = Realm.getDefaultInstance();
-        recyclerView = findViewById(R.id.usergallery);
-        sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
-        String uuid = sharedPreferences.getString("uuid", null);
-        user = realm.where(User.class)
-                .equalTo("uuid", uuid)
-                .findFirst();
-        username = user.getName();
-//        sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
-//
-//        receivedUUID = sharedPreferences.getString("uuid", "N/A");
-//        if (receivedUUID != "N/A") {
-//            RealmQuery<User> query = realm.where(User.class).equalTo("uuid", receivedUUID);
-//            user = query.findFirst();
-//            assert user != null;
-//            username = user.getName();
-//        }
-
-        Log.d("UserDetail", "CURRENT LOGGED IN USER: " + username);
-
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        recyclerView.setLayoutManager(mLayoutManager);
-
-        RealmResults<RecipeImage> list = realm.where(RecipeImage.class).equalTo("username", username).findAll();
-        UserGalleryAdapter adapter = new UserGalleryAdapter(this, list, true);
-        recyclerView.setAdapter(adapter);
-    }
 
     public void onDestroy() {
         super.onDestroy();

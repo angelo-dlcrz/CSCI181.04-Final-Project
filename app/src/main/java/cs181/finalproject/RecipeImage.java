@@ -29,16 +29,13 @@ public class RecipeImage extends RealmObject {
         this.imagePath = imagePath;
     }
 
-    public String getUsername() {
-        return uploader.getName();
-    }
-
     public User getUploader() {
         return uploader;
     }
 
     public void setUploader(User uploader) {
         this.uploader = uploader;
+        this.username = uploader.getName();
     }
 
     public Recipe getRecipe() {

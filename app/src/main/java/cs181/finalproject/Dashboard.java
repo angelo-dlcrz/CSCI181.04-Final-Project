@@ -3,6 +3,7 @@ package cs181.finalproject;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -26,7 +27,7 @@ public class Dashboard extends AppCompatActivity {
     private RecyclerView recyclerView;
     Realm realm;
     SharedPreferences sharedPreferences;
-
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +62,7 @@ public class Dashboard extends AppCompatActivity {
             }
         });
         recyclerView = findViewById(R.id.recyclerView);
+        sharedPreferences = getSharedPreferences("user_details",MODE_PRIVATE);
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -95,8 +97,12 @@ public class Dashboard extends AppCompatActivity {
         Intent intent = new Intent(this, AddRecipe.class);
         startActivity(intent);
     }
-    public void details(){
-        //set intent to recipe details
+    public void details(Recipe r){
+        String uuid = r.getUuid();
+        Intent intent = new Intent(this, RecipeDetail.class);
+        Log.d("Dashboard", "UUID from dash: " + uuid);
+        intent.putExtra("recipeUuid", uuid);
+        startActivity(intent);
     }
     public void onDestroy() {
         super.onDestroy();

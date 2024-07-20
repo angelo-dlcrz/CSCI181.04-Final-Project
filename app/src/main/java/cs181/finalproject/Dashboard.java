@@ -15,6 +15,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -23,6 +27,7 @@ public class Dashboard extends AppCompatActivity {
     private RecyclerView recyclerView;
     Realm realm;
     SharedPreferences sharedPreferences;
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +72,26 @@ public class Dashboard extends AppCompatActivity {
         RealmResults<Recipe> list = realm.where(Recipe.class).findAll();
         RecipeAdapter adapter = new RecipeAdapter(this, list, true);
         recyclerView.setAdapter(adapter);
+
+        sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
+        String uuid = sharedPreferences.getString("uuid", null);
+        User u = realm.where(User.class)
+                .equalTo("uuid", uuid)
+                .findFirst();
+
+        File getImageDir = getExternalCacheDir();
+        if(u.getPath()!=null) {
+            File file = new File(getImageDir, u.getPath());
+            if (file.exists()) {
+                Picasso.get()
+                        .load(file)
+                        .into(user);
+            } else {
+                user.setImageResource(R.mipmap.ic_launcher);
+            }
+        }
+
+
     }
     public void add(){
         Intent intent = new Intent(this, AddRecipe.class);
@@ -91,7 +116,9 @@ public class Dashboard extends AppCompatActivity {
         startActivity(intent);
     }
     public void user(){
-        Intent intent = new Intent(this, UserDetail.class);
+        Intent intent = new Intent(this, Edit.class);
+        String uuid = sharedPreferences.getString("uuid", null);
+        intent.putExtra("uuid", uuid);
         startActivity(intent);
     }
 }

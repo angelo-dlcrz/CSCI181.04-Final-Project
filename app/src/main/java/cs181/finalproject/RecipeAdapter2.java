@@ -34,7 +34,7 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
             author = itemView.findViewById(R.id.author);
             description = itemView.findViewById(R.id.recipeDescription);
             image = itemView.findViewById(R.id.recipeImage);
-            button = itemView.findViewById(R.id.read_more);
+            button = itemView.findViewById(R.id.button);
         }
     }
 
@@ -61,10 +61,11 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
 
         holder.name.setText(recipe.getName());
         holder.description.setText(recipe.getDescription());
-        holder.author.setText("by " + recipe.getAuthor());
-        if (recipe.getPath() != null) {
+        holder.author.setText("by " + recipe.getAuthor().getName());
+      
+        if (recipe.getImagePaths().get(0) != null) {
             File getImageDir = activity.getExternalCacheDir();
-            File file = new File(getImageDir, recipe.getPath());
+            File file = new File(getImageDir, recipe.getImagePaths().get(recipe.getImagePaths().size() - 1));
             if (file.exists()) {
                 Picasso.get()
                         .load(file)
@@ -79,7 +80,7 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.details(recipe);
+                activity.details();
             }
         });
     }

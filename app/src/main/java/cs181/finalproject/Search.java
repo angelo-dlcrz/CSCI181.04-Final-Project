@@ -72,8 +72,7 @@ public class Search extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
     public void home(){
-        Intent intent = new Intent(this, Dashboard.class);
-        startActivity(intent);
+        finish();
     }
     public void onDestroy() {
         super.onDestroy();

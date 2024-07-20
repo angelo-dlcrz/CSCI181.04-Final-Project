@@ -80,7 +80,7 @@ public class RecipeAdapter extends RealmRecyclerViewAdapter<Recipe, RecipeAdapte
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.details();
+                activity.details(recipe);
             }
         });
     }

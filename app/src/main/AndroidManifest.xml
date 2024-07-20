@@ -34,6 +34,9 @@
             android:name=".UserDetail"
             android:exported="false" />
         <activity
+            android:name=".AddRating"
+            android:exported="false" />
+        <activity
             android:name=".RecipeDetail"
             android:exported="false" />
         <activity

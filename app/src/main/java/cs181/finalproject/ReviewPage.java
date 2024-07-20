@@ -2,6 +2,8 @@ package cs181.finalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,7 @@ public class ReviewPage extends AppCompatActivity {
     private RecyclerView recyclerView;
     Realm realm;
     String recipeId;
+    private Button addRating;
 
     public void init(){
         recyclerView = findViewById(R.id.reviewsRecycler);
@@ -42,6 +45,13 @@ public class ReviewPage extends AppCompatActivity {
                 .getRatings();
         ReviewAdapter adapter = new ReviewAdapter(this, ratings, true);
         recyclerView.setAdapter(adapter);
+        addRating = findViewById(R.id.addRating);
+        addRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRating();
+            }
+        });
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,5 +65,10 @@ public class ReviewPage extends AppCompatActivity {
         });
 
         init();
+    }
+    public void addRating(){
+        Intent intent = new Intent(this, AddRating.class);
+        intent.putExtra("recipeId", recipeId);
+        startActivity(intent);
     }
 }

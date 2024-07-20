@@ -11,30 +11,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
-public class UserGalleryAdapter extends RealmRecyclerViewAdapter<Recipe, UserGalleryAdapter.ViewHolder> {
+public class UserGalleryAdapter extends RealmRecyclerViewAdapter<RecipeImage, UserGalleryAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView name;
-        ImageView image;
+        ImageView recipeImage;
 
 
         public ViewHolder(@NonNull View itemView){
             super(itemView);
-            name  = itemView.findViewById(R.id.recipeName2);
+//            name  = itemView.findViewById(R.id.recipeName2);
+            recipeImage = itemView.findViewById(R.id.userRecipeImage);
         }
     }
 
     UserDetail activity;
 
-    public UserGalleryAdapter(UserDetail activity, @Nullable RealmResults<Recipe> data, boolean autoUpdate) {
+    public UserGalleryAdapter(UserDetail activity, @Nullable OrderedRealmCollection<RecipeImage> data, boolean autoUpdate) {
         super(data, autoUpdate);
 
         this.activity = activity;
@@ -51,46 +56,21 @@ public class UserGalleryAdapter extends RealmRecyclerViewAdapter<Recipe, UserGal
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Recipe recipe = getItem(position);
+        RecipeImage image = getItem(position);
 
-        LinearLayout imageContainer = holder.itemView.findViewById(R.id.imageContainer);
-        imageContainer.removeAllViews(); // Clear previous images
-
-        RealmList<String> realmImagePaths = recipe.getImagePaths();
-        if (realmImagePaths != null && !realmImagePaths.isEmpty()) {
-            List<String> imagePaths = new ArrayList<>(realmImagePaths);
-
-            for (String imagePath : imagePaths) {
-                File getImageDir = activity.getExternalCacheDir();
-                File file = new File(getImageDir, imagePath);
-
-                if (file.exists()) {
-                    LinearLayout imageAndNameLayout = new LinearLayout(activity);
-                    imageAndNameLayout.setOrientation(LinearLayout.VERTICAL);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                    );
-                    imageAndNameLayout.setLayoutParams(layoutParams);
-
-                    TextView nameTextView = new TextView(activity);
-                    nameTextView.setText(recipe.getName());
-                    imageAndNameLayout.addView(nameTextView);
-
-                    ImageView imageView = new ImageView(activity);
-                    LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
-                            500, 500);
-                    imageView.setLayoutParams(imageParams);
-                    Picasso.get()
-                            .load(file)
-                            .fit()
-                            .centerCrop()
-                            .into(imageView);
-                    imageAndNameLayout.addView(imageView);
-
-                    imageContainer.addView(imageAndNameLayout);
-                }
+        if (image.getImagePath() != null) {
+            File getImageDir = activity.getExternalCacheDir();
+            File file = new File(getImageDir, image.getImagePath());
+            if (file.exists()) {
+                Picasso.get()
+                        .load(file)
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE)
+                        .into(holder.recipeImage);
             }
+        }
+        else {
+            holder.recipeImage.setImageResource(R.mipmap.ic_launcher);
         }
     }
 

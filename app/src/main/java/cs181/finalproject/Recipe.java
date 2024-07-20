@@ -13,12 +13,13 @@ public class Recipe extends RealmObject {
     private String uuid = UUID.randomUUID().toString();
     private String name;
     private User author;
+    private String username;
     private String description;
     private String instructions;
     private String ingredients;
     private RealmList<String> imagePaths;
-    private RealmList<Rating> ratings;
-    private RealmList<RecipeImage> userImages;
+    private RealmList<Rating> ratings = new RealmList<>();
+    private RealmList<RecipeImage> userImages = new RealmList<>();;
   
 
     public Recipe(){}
@@ -35,27 +36,14 @@ public class Recipe extends RealmObject {
         return name;
     }
 
-    public User getAuthor() {
-        return author;
-    }
-
-    @Override
-    public String toString() {
-        return "Recipe{" +
-                "uuid='" + uuid + '\'' +
-                ", name='" + name + '\'' +
-                ", author=" + author +
-                ", description='" + description + '\'' +
-                ", instructions='" + instructions + '\'' +
-                ", ingredients='" + ingredients + '\'' +
-                ", path='" + path + '\'' +
-                ", ratings=" + ratings +
-                ", userImages=" + userImages +
-                '}';
-    }
-
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public String getUsername(){return author.getName();}
+
+    public User getAuthor() {
+        return author;
     }
 
     public RealmList<Rating> getRatings() {
@@ -63,11 +51,12 @@ public class Recipe extends RealmObject {
     }
 
     public void addRatings(Rating rating) {
-        if(this.ratings==null){
-            this.ratings = new RealmList<>();
+        if(this.ratings!=null){
+            this.ratings.add(rating);
         }
-        this.ratings.add(rating);
+
     }
+
 
     public RealmList<RecipeImage> getUserImages() {
         return userImages;
@@ -108,21 +97,6 @@ public class Recipe extends RealmObject {
         this.ingredients = ingredients;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
     public RealmList<String> getImagePaths() {
         return imagePaths;
     }
@@ -138,17 +112,18 @@ public class Recipe extends RealmObject {
         imagePaths.add(path);
     }
 
-
     @Override
     public String toString() {
         return "Recipe{" +
                 "uuid='" + uuid + '\'' +
                 ", name='" + name + '\'' +
-                ", author='" + author + '\'' +
+                ", author=" + author +
                 ", description='" + description + '\'' +
                 ", instructions='" + instructions + '\'' +
                 ", ingredients='" + ingredients + '\'' +
-                ", path='" + path + '\'' +
+                ", imagePaths=" + imagePaths +
+                ", ratings=" + ratings +
+                ", userImages=" + userImages +
                 '}';
     }
 }

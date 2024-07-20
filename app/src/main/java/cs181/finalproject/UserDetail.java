@@ -25,6 +25,7 @@ import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
 
 import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
@@ -51,14 +52,20 @@ public class UserDetail extends AppCompatActivity {
         realm = Realm.getDefaultInstance();
         recyclerView = findViewById(R.id.usergallery);
         sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
-
-        receivedUUID = sharedPreferences.getString("uuid", "N/A");
-        if (receivedUUID != "N/A") {
-            RealmQuery<User> query = realm.where(User.class).equalTo("uuid", receivedUUID);
-            user = query.findFirst();
-            assert user != null;
-            username = user.getName();
-        }
+        String uuid = sharedPreferences.getString("uuid", null);
+        user = realm.where(User.class)
+                .equalTo("uuid", uuid)
+                .findFirst();
+        username = user.getName();
+//        sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
+//
+//        receivedUUID = sharedPreferences.getString("uuid", "N/A");
+//        if (receivedUUID != "N/A") {
+//            RealmQuery<User> query = realm.where(User.class).equalTo("uuid", receivedUUID);
+//            user = query.findFirst();
+//            assert user != null;
+//            username = user.getName();
+//        }
 
         Log.d("UserDetail", "CURRENT LOGGED IN USER: " + username);
 
@@ -66,8 +73,7 @@ public class UserDetail extends AppCompatActivity {
         mLayoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        Log.d("UserDetail", "USER DETAIL UUID: " + receivedUUID);
-        RealmResults<Recipe> list = realm.where(Recipe.class).equalTo("author", username).findAll();
+        RealmResults<RecipeImage> list = realm.where(RecipeImage.class).equalTo("username", username).findAll();
         UserGalleryAdapter adapter = new UserGalleryAdapter(this, list, true);
         recyclerView.setAdapter(adapter);
     }
@@ -79,10 +85,6 @@ public class UserDetail extends AppCompatActivity {
             realm.close();
         }
     }
-
-    /*
-    To filter how to show images of only user. Use realmquery where uuid = user uuid (received uuid). then use recycler view to show the images associated with the user.
-     */
 
 
 }

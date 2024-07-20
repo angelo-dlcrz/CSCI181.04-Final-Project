@@ -22,7 +22,7 @@ import java.io.File;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class Dashboard extends AppCompatActivity {
+public class  Dashboard extends AppCompatActivity {
     private ImageButton search, user, add;
     private RecyclerView recyclerView;
     Realm realm;
@@ -116,9 +116,7 @@ public class Dashboard extends AppCompatActivity {
         startActivity(intent);
     }
     public void user(){
-        Intent intent = new Intent(this, Edit.class);
-        String uuid = sharedPreferences.getString("uuid", null);
-        intent.putExtra("uuid", uuid);
+        Intent intent = new Intent(this, UserDetail.class);
         startActivity(intent);
     }
 }

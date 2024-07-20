@@ -3,6 +3,7 @@ package cs181.finalproject;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ public class AddRecipe extends AppCompatActivity {
     private EditText name, description, ingredients, steps;
     private Button image;
     private ImageView imageView;
+    private String uuid;
     private RealmList<String> imagePaths;
     SharedPreferences sharedPreferences;
 
@@ -82,7 +84,7 @@ public class AddRecipe extends AppCompatActivity {
 
     public void add() {
         Recipe recipe = new Recipe();
-        String uuid = sharedPreferences.getString("uuid", null);
+        uuid = sharedPreferences.getString("uuid", null);
         User user = realm.where(User.class)
                 .equalTo("uuid", uuid)
                 .findFirst();
@@ -137,9 +139,17 @@ public class AddRecipe extends AppCompatActivity {
                 try {
                     String imagePath = System.currentTimeMillis() + ".jpeg";
                     File savedImage = saveFile(jpeg, imagePath);
-
                     imagePaths.add(imagePath);
                     refreshImageView(imageView, savedImage);
+
+                    User user = realm.where(User.class)
+                                .equalTo("uuid", uuid)
+                                .findFirst();
+
+                    RecipeImage recipeImage = new RecipeImage();
+                    recipeImage.setImagePath(imagePath);
+                    recipeImage.setUploader(user);
+                    Log.e("AddRecipe", "UPLOADER: " + user);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

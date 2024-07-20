@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmQuery;
 
 public class RecipeDetail extends AppCompatActivity {
@@ -41,14 +42,21 @@ public class RecipeDetail extends AppCompatActivity {
     Button addphoto;
     ImageView image;
     Recipe recipe;
+    RecipeImage recipeImage;
     private String imagePath;
     SharedPreferences sharedPreferences;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-        sharedPreferences = getSharedPreferences("user_details",MODE_PRIVATE);
+        realm = Realm.getDefaultInstance();
+        sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
+        String uuid = sharedPreferences.getString("uuid", null);
+        user = realm.where(User.class)
+                .equalTo("uuid", uuid)
+                .findFirst();
 
         title = (TextView) findViewById(R.id.recipetitle);
         image = findViewById(R.id.imageView3);
@@ -58,7 +66,7 @@ public class RecipeDetail extends AppCompatActivity {
         photos = findViewById(R.id.button3);
         addphoto = findViewById(R.id.button2);
 
-        realm = Realm.getDefaultInstance();
+
         intent = getIntent();
 
         if(intent.hasExtra("recipeUuid")){
@@ -68,24 +76,6 @@ public class RecipeDetail extends AppCompatActivity {
         if (receivedUUID != null) {
             RealmQuery<Recipe> query = realm.where(Recipe.class).equalTo("uuid", receivedUUID);
             recipe = query.findFirst();
-
-            /*
-            if (editUser != null) {
-                String imagePath = editUser.getPath();
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    File imageFile = new File(getExternalCacheDir(), imagePath);
-                    if (imageFile.exists()) {
-                        Picasso.get()
-                                .load(imageFile)
-                                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                                .networkPolicy(NetworkPolicy.NO_CACHE)
-                                .into(imageView3);
-                    } else {
-                        Log.e("UserEdit", "Image file not found: " + imageFile.getAbsolutePath());
-                    }
-                }
-            }
-             */
         }
 
         ratings.setOnClickListener(new View.OnClickListener() {
@@ -113,9 +103,9 @@ public class RecipeDetail extends AppCompatActivity {
         steps.setText(recipe.getInstructions());
         ingredients.setText(recipe.getIngredients());
 
-        String imagePath = recipe.getPath();
-        if (imagePath != null && !imagePath.isEmpty()) {
-            File imageFile = new File(getExternalCacheDir(), imagePath);
+        RealmList<String> imagePath = recipe.getImagePaths();
+        if (!imagePath.isEmpty()) {
+            File imageFile = new File(getExternalCacheDir(), recipe.getImagePaths().get(recipe.getImagePaths().size() - 1));
             Picasso.get()
                     .load(imageFile)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
@@ -128,14 +118,14 @@ public class RecipeDetail extends AppCompatActivity {
     }
 
     public void viewratings(){
-        //make intent to go to ratings.class
+        Intent intent = new Intent(this, ReviewPage.class);
+        intent.putExtra("recipeId", receivedUUID);
+        startActivity(intent);
     }
 
     public void viewphoto(){
-        String uuid = sharedPreferences.getString("uuid", "N/A");
-        Intent intent = new Intent(this, UserDetail.class);
-        intent.putExtra("userUuid", uuid);
-        Log.d("Dashboard", "DASHBOARD UUID: " + uuid);
+        Intent intent = new Intent(this, RecipeGallery.class);
+        intent.putExtra("recipeId", recipe.getUuid());
         startActivity(intent);
     }
     public void addImage(){
@@ -143,6 +133,7 @@ public class RecipeDetail extends AppCompatActivity {
         startActivityForResult(intent, 0);
     }
     public void onActivityResult(int requestCode, int responseCode, Intent data){
+        recipeImage = new RecipeImage();
         super.onActivityResult(requestCode, responseCode, data);
 
         if(requestCode==0){
@@ -155,11 +146,15 @@ public class RecipeDetail extends AppCompatActivity {
                     Log.e("RecipeDetail", "IMAGE SAVED + ADDED TO addImagePath: " + imagePath);
                     String sd = String.join(",", recipe.getImagePaths());
                     Log.e("RecipeDetail", "FOLLOWING IMAGE PATHS: " + sd);
+                    recipeImage.setImagePath(imagePath);
+                    recipeImage.setRecipe(recipe);
+                    recipeImage.setUploader(user);
                     try {
                         realm.beginTransaction();
-                        recipe.setPath(imagePath);
-                        recipe.addImagePath(imagePath);
+                        realm.copyToRealm(recipeImage);
+                        recipe.addUserImages(recipeImage);
                         realm.commitTransaction();
+                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
                     }
                     catch (Exception e){
                         Toast.makeText(this, "Error saving", Toast.LENGTH_SHORT).show();

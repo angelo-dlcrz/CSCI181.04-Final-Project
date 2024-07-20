@@ -10,6 +10,7 @@ public class RecipeImage extends RealmObject {
     private String uuid = UUID.randomUUID().toString();
     private String imagePath;
     private User uploader;
+    private String username;
     private Recipe recipe;
 
     public String getUuid() {
@@ -26,6 +27,10 @@ public class RecipeImage extends RealmObject {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getUsername() {
+        return uploader.getName();
     }
 
     public User getUploader() {

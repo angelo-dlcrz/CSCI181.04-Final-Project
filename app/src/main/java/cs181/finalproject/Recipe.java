@@ -51,10 +51,10 @@ public class Recipe extends RealmObject {
     }
 
     public void addRatings(Rating rating) {
-        if(this.ratings!=null){
-            this.ratings.add(rating);
-        }
-
+        this.ratings.add(rating);
+    }
+    public void setRatings(RealmList<Rating> ratings){
+        this.ratings = ratings;
     }
 
 

@@ -2,6 +2,7 @@ package cs181.finalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class ReviewPage extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -38,6 +40,10 @@ public class ReviewPage extends AppCompatActivity {
         else{
             recipeId = null;
         }
+        Recipe recipe = realm.where(Recipe.class)
+                .equalTo("uuid", recipeId)
+                .findFirst();
+        Log.e("recipeID", recipe.toString());
 
         RealmList<Rating> ratings = realm.where(Recipe.class)
                 .equalTo("uuid", recipeId)
@@ -45,6 +51,7 @@ public class ReviewPage extends AppCompatActivity {
                 .getRatings();
         ReviewAdapter adapter = new ReviewAdapter(this, ratings, true);
         recyclerView.setAdapter(adapter);
+
         addRating = findViewById(R.id.addRating);
         addRating.setOnClickListener(new View.OnClickListener() {
             @Override

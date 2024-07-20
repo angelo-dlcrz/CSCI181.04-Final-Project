@@ -25,32 +25,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Recipe Rating:"
-        app:layout_constraintStart_toStartOf="@+id/header"
-        tools:layout_editor_absoluteY="250dp" />
+        app:layout_constraintStart_toStartOf="@+id/comments"
+        app:layout_constraintTop_toBottomOf="@+id/comments" />
 
     <TextView
         android:id="@+id/recipeComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="32dp"
         android:text="Comments:"
-        app:layout_constraintStart_toStartOf="@+id/recipename"
-        app:layout_constraintTop_toBottomOf="@+id/recipename" />
+        app:layout_constraintStart_toStartOf="@+id/header"
+        app:layout_constraintTop_toBottomOf="@+id/header" />
 
     <EditText
         android:id="@+id/comments"
         android:layout_width="345dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Enter your comments here"
         android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/recipename"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/recipeComment"
-        app:layout_constraintTop_toBottomOf="@+id/recipeComment"
-        app:layout_constraintVertical_bias="0.028" />
+        app:layout_constraintTop_toBottomOf="@+id/recipeComment" />
 
     <EditText
         android:id="@+id/rating"
@@ -74,21 +69,18 @@
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.482"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.67" />
+        app:layout_constraintVertical_bias="0.612" />
 
     <Button
         android:id="@+id/ratingCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/add"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/add"
-        app:layout_constraintTop_toBottomOf="@+id/add"
-        app:layout_constraintVertical_bias="0.068" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingAdd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -100,7 +100,7 @@ public class Dashboard extends AppCompatActivity {
     public void details(Recipe r){
         String uuid = r.getUuid();
         Intent intent = new Intent(this, RecipeDetail.class);
-        Log.d("Dashboard", "UUID from dash: " + uuid);
+        Log.e("Dashboard", "UUID from dash: " + uuid);
         intent.putExtra("recipeUuid", uuid);
         startActivity(intent);
     }

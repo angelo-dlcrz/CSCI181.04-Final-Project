@@ -61,11 +61,11 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
 
         holder.name.setText(recipe.getName());
         holder.description.setText(recipe.getDescription());
-        holder.author.setText("by " + recipe.getAuthor());
+        holder.author.setText("by " + recipe.getAuthor().getName());
 
         if (recipe.getImagePaths().get(0) != null) {
             File getImageDir = activity.getExternalCacheDir();
-            File file = new File(getImageDir, recipe.getImagePaths().get(0));
+            File file = new File(getImageDir, recipe.getImagePaths().get(recipe.getImagePaths().size() - 1));
             if (file.exists()) {
                 Picasso.get()
                         .load(file)

@@ -14,7 +14,7 @@ public class Recipe extends RealmObject {
 
 
     private String name;
-    private String author;
+    private User author;
     private String description;
     private String instructions;
     private String ingredients;
@@ -71,11 +71,11 @@ public class Recipe extends RealmObject {
         this.path = path;
     }
 
-    public String getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 

@@ -30,6 +30,7 @@ public class AddRecipe extends AppCompatActivity {
     private Button add, cancel;
     private EditText name, description, ingredients, steps;
     private Button image;
+    private ImageView imageView;
     private RealmList<String> imagePaths;
     SharedPreferences sharedPreferences;
 
@@ -73,7 +74,7 @@ public class AddRecipe extends AppCompatActivity {
                 addImage();
             }
         });
-
+        imageView = findViewById(R.id.image);
         realm = Realm.getDefaultInstance();
         sharedPreferences = getSharedPreferences("user_details", MODE_PRIVATE);
         imagePaths = new RealmList<>();
@@ -94,13 +95,16 @@ public class AddRecipe extends AppCompatActivity {
             Toast.makeText(this, "Please enter ingredients", Toast.LENGTH_SHORT).show();
         } else if (steps.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter instructions", Toast.LENGTH_SHORT).show();
-        } else {
+        } else if (imagePaths.isEmpty()) {
+            Toast.makeText(this, "Please add an image", Toast.LENGTH_SHORT).show();
+        }
+        else {
             recipe.setName(name.getText().toString());
             recipe.setDescription(description.getText().toString());
             recipe.setIngredients(ingredients.getText().toString());
             recipe.setInstructions(steps.getText().toString());
             recipe.setImagePaths(imagePaths);
-            recipe.setAuthor(user.getName());
+            recipe.setAuthor(user);
 
             try {
                 realm.beginTransaction();
@@ -136,6 +140,7 @@ public class AddRecipe extends AppCompatActivity {
                     File savedImage = saveFile(jpeg, imagePath);
 
                     imagePaths.add(imagePath);
+                    refreshImageView(imageView, savedImage);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -152,6 +157,13 @@ public class AddRecipe extends AppCompatActivity {
         return savedImage;
     }
 
+    private void refreshImageView(ImageView imageView, File savedImage) {
+        Picasso.get()
+                .load(savedImage)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(imageView);
+    }
 
     @Override
     public void onDestroy() {

@@ -34,6 +34,12 @@
             android:name=".Edit"
             android:exported="false" />
         <activity
+            android:name=".ReviewPage"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeGallery"
+            android:exported="false" />
+        <activity
             android:name=".Search"
             android:exported="false" />
         <activity

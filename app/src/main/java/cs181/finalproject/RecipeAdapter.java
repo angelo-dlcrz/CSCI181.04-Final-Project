@@ -14,8 +14,6 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 
 import io.realm.OrderedRealmCollection;
@@ -64,8 +62,8 @@ public class RecipeAdapter extends RealmRecyclerViewAdapter<Recipe, RecipeAdapte
         holder.name.setText(recipe.getName());
         holder.description.setText(recipe.getDescription());
         holder.author.setText("by " + recipe.getAuthor().getName());
-
         if (recipe.getImagePaths().get(0) != null) {
+
             File getImageDir = activity.getExternalCacheDir();
             File file = new File(getImageDir, recipe.getImagePaths().get(recipe.getImagePaths().size() - 1));
             if (file.exists()) {

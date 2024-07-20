@@ -34,7 +34,7 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
             author = itemView.findViewById(R.id.author);
             description = itemView.findViewById(R.id.recipeDescription);
             image = itemView.findViewById(R.id.recipeImage);
-            button = itemView.findViewById(R.id.button);
+            button = itemView.findViewById(R.id.read_more);
         }
     }
 
@@ -79,7 +79,7 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.details();
+                activity.details(recipe);
             }
         });
     }

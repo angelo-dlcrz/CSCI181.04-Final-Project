@@ -1,7 +1,10 @@
 package cs181.finalproject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -16,6 +19,7 @@ public class Recipe extends RealmObject {
     private String instructions;
     private String ingredients;
     private String path;
+    private RealmList<String> imagePaths;
 
     public Recipe(){}
 
@@ -74,6 +78,18 @@ public class Recipe extends RealmObject {
     public void setAuthor(String author) {
         this.author = author;
     }
+
+    public RealmList<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void addImagePath(String path) {
+        if (imagePaths == null) {
+            imagePaths = new RealmList<>();
+        }
+        imagePaths.add(path);
+    }
+
 
     @Override
     public String toString() {

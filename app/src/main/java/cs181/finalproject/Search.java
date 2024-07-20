@@ -82,7 +82,10 @@ public class Search extends AppCompatActivity {
             realm.close();
         }
     }
-    public void details(){
-        //set intent to recipe details
+    public void details(Recipe r){
+        String uuid = r.getUuid();
+        Intent intent = new Intent(this, RecipeDetail.class);
+        intent.putExtra("recipeUuid", uuid);
+        startActivity(intent);
     }
 }

@@ -14,8 +14,6 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 
 import io.realm.OrderedRealmCollection;
@@ -36,7 +34,7 @@ public class RecipeAdapter extends RealmRecyclerViewAdapter<Recipe, RecipeAdapte
             author = itemView.findViewById(R.id.author);
             description = itemView.findViewById(R.id.recipeDescription);
             image = itemView.findViewById(R.id.recipeImage);
-            button = itemView.findViewById(R.id.button);
+            button = itemView.findViewById(R.id.read_more);
         }
     }
 
@@ -81,7 +79,7 @@ public class RecipeAdapter extends RealmRecyclerViewAdapter<Recipe, RecipeAdapte
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.details();
+                activity.details(recipe);
             }
         });
     }

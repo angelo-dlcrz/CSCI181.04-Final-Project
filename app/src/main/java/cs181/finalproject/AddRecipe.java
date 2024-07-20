@@ -103,6 +103,7 @@ public class AddRecipe extends AppCompatActivity {
             recipe.setIngredients(ingredients.getText().toString());
             recipe.setInstructions(steps.getText().toString());
             recipe.setPath(imagePath);
+            recipe.addImagePath(imagePath);
             recipe.setAuthor(user.getName());
             try {
                 realm.beginTransaction();

@@ -26,6 +26,7 @@ public class Dashboard extends AppCompatActivity {
     private RecyclerView recyclerView;
     Realm realm;
     SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +50,7 @@ public class Dashboard extends AppCompatActivity {
         user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                user();
+                user();
             }
         });
         add = findViewById(R.id.add);
@@ -75,6 +76,7 @@ public class Dashboard extends AppCompatActivity {
         User u = realm.where(User.class)
                 .equalTo("uuid", uuid)
                 .findFirst();
+
         File getImageDir = getExternalCacheDir();
         if(u.getPath()!=null) {
             File file = new File(getImageDir, u.getPath());
@@ -107,7 +109,10 @@ public class Dashboard extends AppCompatActivity {
         Intent intent = new Intent(this, Search.class);
         startActivity(intent);
     }
-//    public void user(){
-//        set intent to profile
-//    }
+    public void user(){
+        Intent intent = new Intent(this, Edit.class);
+        String uuid = sharedPreferences.getString("uuid", null);
+        intent.putExtra("uuid", uuid);
+        startActivity(intent);
+    }
 }

@@ -9,7 +9,7 @@ public class User extends RealmObject {
     @PrimaryKey
     private String uuid = UUID.randomUUID().toString();
 
-    private String name;
+        private String name;
     private String password;
     private String path;
 

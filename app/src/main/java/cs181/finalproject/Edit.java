@@ -22,104 +22,82 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import io.realm.Case;
 import io.realm.Realm;
 
-public class Register extends AppCompatActivity {
-    Button save;
-    Button cancel;
+public class Edit extends AppCompatActivity {
     EditText username;
     EditText password;
     EditText password2;
+    String uuid;
+    Button save;
+    Button cancel;
     Realm realm;
-    ImageView image;
+    Intent intent;
+    ImageView imageView;
     String imagePath;
-
-    public void init(){
-        save = findViewById(R.id.save);
-        cancel = findViewById(R.id.cancel);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_edit);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         password2 = findViewById(R.id.password2);
-        image = findViewById(R.id.userImage);
+        imageView = findViewById(R.id.userImage);
 
+        realm = Realm.getDefaultInstance();
+        intent = getIntent();
+
+        uuid = intent.getStringExtra("uuid");
+        User u = realm.where(User.class)
+                .equalTo("uuid", uuid)
+                .findFirst();
+        User buffer = realm.copyFromRealm(u);
+        username.setText(buffer.getName().toString());
+        password.setText(buffer.getPassword().toString());
+        password2.setText(buffer.getPassword().toString());
+
+        File getImageDir = getExternalCacheDir();
+        if(u.getPath()!=null) {
+            File file = new File(getImageDir, u.getPath());
+            if (file.exists()) {
+                Picasso.get()
+                        .load(file)
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.mipmap.ic_launcher);
+            }
+        }
+        imagePath = u.getPath();
+
+        save = findViewById(R.id.save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                save();
+                save(buffer);
             }
         });
+
+        cancel = findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancel();
             }
         });
-        image.setOnClickListener(new View.OnClickListener() {
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addImage();
             }
         });
 
-        realm = Realm.getDefaultInstance();
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        init();
-    }
-
-    public void save(){
-
-        User newUser =new User();
-        long count = 0;
-
-        if(username.getText().length()==0){
-            Toast.makeText(this, "Name must not be blank", Toast.LENGTH_SHORT).show();
-        }
-        else if(!password.getText().toString().equals(password2.getText().toString())){
-            Toast.makeText(this, "Confirm password does not match", Toast.LENGTH_SHORT).show();
-        }
-        else if(password.getText().length()==0 || password2.getText().length()==0) {
-            Toast.makeText(this, "Password must not be blank", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            User registered = realm.where(User.class)
-                    .equalTo("name", username.getText().toString(), Case.INSENSITIVE)
-                    .findFirst();
-            if(registered!=null) {
-                Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                newUser.setName(username.getText().toString());
-                newUser.setPassword(password.getText().toString());
-                newUser.setPath(imagePath);
-                try {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(newUser);
-                    realm.commitTransaction();
-
-                    count = realm.where(User.class).count();
-
-                    Toast.makeText(this, "New User saved. Total " + count, Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(this, "Error saving", Toast.LENGTH_SHORT).show();
-                }
-                finish();
-
-            }
-
-        }
-    }
-
     public void cancel(){
         finish();
     }
@@ -138,7 +116,7 @@ public class Register extends AppCompatActivity {
                     imagePath = System.currentTimeMillis()+".jpeg";
                     File savedImage = saveFile(jpeg, imagePath);
 
-                    refreshImageView(image, savedImage);
+                    refreshImageView(imageView, savedImage);
                 }
                 catch(Exception e)
                 {
@@ -171,12 +149,25 @@ public class Register extends AppCompatActivity {
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .into(imageView);
     }
+    public void save(User updatedUser){
+        if(username.getText().length()==0){
+            Toast.makeText(this, "Name must not be blank", Toast.LENGTH_SHORT).show();
+        }
+        else if(!password.getText().toString().equals(password2.getText().toString())){
+            Toast.makeText(this, "Confirm password does not match", Toast.LENGTH_SHORT).show();
+        }
+        else if(password.getText().length()==0 || password2.getText().length()==0) {
+            Toast.makeText(this, "Password must not be blank", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            updatedUser.setName(username.getText().toString());
+            updatedUser.setPassword(password.getText().toString());
+            updatedUser.setPath(imagePath);
 
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (!realm.isClosed()) {
-            realm.close();
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(updatedUser);
+            realm.commitTransaction();
+            finish();
         }
     }
 }

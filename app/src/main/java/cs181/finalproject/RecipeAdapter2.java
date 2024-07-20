@@ -61,7 +61,7 @@ public class RecipeAdapter2 extends RealmRecyclerViewAdapter<Recipe, RecipeAdapt
 
         holder.name.setText(recipe.getName());
         holder.description.setText(recipe.getDescription());
-        holder.author.setText("by " + recipe.getAuthor());
+        holder.author.setText("by " + recipe.getAuthor().getName());
         if (recipe.getPath() != null) {
             File getImageDir = activity.getExternalCacheDir();
             File file = new File(getImageDir, recipe.getPath());
